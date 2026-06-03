@@ -33,7 +33,9 @@ export function DataTable<T>({
     );
   }
 
-  if (data.length === 0) {
+  const rows = Array.isArray(data) ? data : [];
+
+  if (rows.length === 0) {
     return (
       <div className="rounded-xl border border-slate-700/80 bg-slate-900/50 p-8 text-center text-sm text-slate-400">
         {emptyMessage}
@@ -61,7 +63,7 @@ export function DataTable<T>({
             </tr>
           </thead>
           <tbody>
-            {data.map((row) => (
+            {rows.map((row) => (
               <tr
                 key={keyExtractor(row)}
                 className="border-b border-slate-800/80 transition-colors hover:bg-slate-800/40 last:border-0"

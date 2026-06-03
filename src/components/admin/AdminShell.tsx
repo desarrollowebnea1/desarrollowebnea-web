@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { ReactNode, useState } from "react";
+import { AdminErrorBoundary } from "./AdminErrorBoundary";
 import { AdminHeader } from "./AdminHeader";
 import { AdminSidebar } from "./AdminSidebar";
 
@@ -52,7 +53,9 @@ export function AdminShell({ children, title, subtitle }: AdminShellProps) {
           subtitle={subtitle}
           onMenuClick={() => setDrawerOpen(true)}
         />
-        <main className={cn("flex-1 p-4 sm:p-6 lg:p-8")}>{children}</main>
+        <main className={cn("flex-1 p-4 sm:p-6 lg:p-8")}>
+          <AdminErrorBoundary>{children}</AdminErrorBoundary>
+        </main>
       </div>
     </div>
   );

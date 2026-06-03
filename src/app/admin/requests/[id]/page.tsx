@@ -10,6 +10,7 @@ import { TextAreaField } from "@/components/admin/TextAreaField";
 import { BUDGET_STATUS_LABELS } from "@/lib/constants";
 import { adminFetch } from "@/lib/admin-fetch";
 import { formatDate } from "@/lib/utils";
+import { getWhatsAppLink } from "@/lib/whatsapp";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { FormEvent, useEffect, useState } from "react";
@@ -50,14 +51,18 @@ export default function RequestDetailPage() {
 
   useEffect(() => {
     if (!id) return;
-    void adminFetch<BudgetRequest>(`/api/admin/requests/${id}`).then((res) => {
-      if (res.ok && res.data) {
-        setRequest(res.data);
-        setStatus(res.data.status);
-        setStatusMessage(res.data.statusMessage || "");
-      }
-      setLoading(false);
-    });
+    void adminFetch<BudgetRequest>(`/api/admin/requests/${id}`)
+      .then((res) => {
+        if (res.ok && res.data) {
+          setRequest(res.data);
+          setStatus(res.data.status || "NUEVA");
+          setStatusMessage(res.data.statusMessage || "");
+        } else if (!res.ok) {
+          setError(res.error || "No pudimos cargar la solicitud.");
+        }
+      })
+      .catch(() => setError("No pudimos cargar la solicitud."))
+      .finally(() => setLoading(false));
   }, [id]);
 
   async function handleSubmit(e: FormEvent) {
@@ -82,7 +87,24 @@ export default function RequestDetailPage() {
   }
 
   if (loading) return <p className="text-slate-400">Cargando solicitud...</p>;
+  if (error && !request) {
+    return (
+      <div>
+        <AlertMessage type="error" message={error} />
+        <Link href="/admin/requests" className="mt-4 inline-block text-sm text-slate-400 hover:text-white">
+          ← Volver a solicitudes
+        </Link>
+      </div>
+    );
+  }
   if (!request) return <p className="text-red-400">Solicitud no encontrada</p>;
+
+  const whatsappLink = request.whatsapp
+    ? getWhatsAppLink(
+        `Hola ${request.name}, te escribimos desde Desarrollo Web NEA sobre tu solicitud ${request.code}.`,
+        request.whatsapp
+      )
+    : null;
 
   const fields = [
     ["WhatsApp", request.whatsapp],
@@ -112,7 +134,7 @@ export default function RequestDetailPage() {
       </div>
 
       <div className="mb-8 rounded-xl border border-slate-700/80 bg-slate-900/50 p-6">
-        <h3 className="mb-4 text-lg font-medium text-white">{request.name}</h3>
+        <h3 className="mb-4 text-lg font-medium text-white">{request.name || "Sin nombre"}</h3>
         <dl className="grid gap-3 sm:grid-cols-2">
           {fields.map(([label, value]) =>
             value ? (
@@ -158,15 +180,19 @@ export default function RequestDetailPage() {
       </form>
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
-        <FormField label="WhatsApp" value={request.whatsapp} readOnly />
-        <a
-          href={`https://wa.me/${request.whatsapp.replace(/\D/g, "")}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="self-end text-sm text-emerald-400 hover:underline"
-        >
-          Abrir en WhatsApp →
-        </a>
+        <FormField label="WhatsApp" value={request.whatsapp || "—"} readOnly />
+        {whatsappLink ? (
+          <a
+            href={whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="self-end text-sm text-emerald-400 hover:underline"
+          >
+            Abrir en WhatsApp →
+          </a>
+        ) : (
+          <span className="self-end text-sm text-slate-500">WhatsApp no disponible</span>
+        )}
       </div>
     </div>
   );

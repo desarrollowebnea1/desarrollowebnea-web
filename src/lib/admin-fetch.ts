@@ -38,6 +38,19 @@ export async function adminFetch<T = unknown>(
   return { ok: true, data: json.data, status: res.status };
 }
 
+export function ensureArray<T>(value: unknown): T[] {
+  if (Array.isArray(value)) return value;
+  if (
+    value &&
+    typeof value === "object" &&
+    "items" in value &&
+    Array.isArray((value as { items: unknown }).items)
+  ) {
+    return (value as { items: T[] }).items;
+  }
+  return [];
+}
+
 export function linesToArray(text: string): string[] {
   return text
     .split("\n")

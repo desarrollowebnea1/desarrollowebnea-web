@@ -24,14 +24,21 @@ export function formatCurrency(value: string | number): string {
   }).format(num);
 }
 
-export function formatDate(date: Date | string): string {
-  return new Intl.DateTimeFormat("es-AR", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(date));
+export function formatDate(date: Date | string | null | undefined): string {
+  if (!date) return "—";
+  const parsed = new Date(date);
+  if (Number.isNaN(parsed.getTime())) return "—";
+  try {
+    return new Intl.DateTimeFormat("es-AR", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(parsed);
+  } catch {
+    return "—";
+  }
 }
 
 export function generateBudgetCode(): string {
