@@ -180,7 +180,7 @@ export function Hero({ title, subtitle, slogan, projects = [] }: HeroProps) {
               >
                 <p className="text-xs text-slate-muted">Satisfacción</p>
                 <p className="font-heading text-xl font-bold text-whatsapp">
-                  98%
+                  100%
                 </p>
               </motion.div>
             </div>

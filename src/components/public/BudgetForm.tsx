@@ -49,7 +49,31 @@ const YES_NO = [
   { value: "parcial", label: "Parcial / en proceso" },
 ];
 
+const FALLBACK_SERVICE_NAMES = [
+  "Páginas web institucionales",
+  "Catálogos digitales",
+  "Sistemas de gestión",
+  "Webs para restaurantes",
+  "Webs para clínicas y consultorios",
+  "Webs para inmobiliarias",
+  "Webs para comercios",
+  "Aplicaciones web",
+  "SaaS a medida",
+  "Automatizaciones",
+  "Paneles admin",
+] as const;
+
+function getServiceOptions(services: PublicService[]): PublicService[] {
+  if (services.length > 0) return services;
+  return FALLBACK_SERVICE_NAMES.map((name, index) => ({
+    id: `fallback-${index}`,
+    name,
+    description: "",
+  }));
+}
+
 export function BudgetForm({ services = [], whatsapp }: BudgetFormProps) {
+  const serviceOptions = getServiceOptions(services);
   const [form, setForm] = useState<FormState>(initialForm);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -227,7 +251,7 @@ export function BudgetForm({ services = [], whatsapp }: BudgetFormProps) {
                     onChange={(e) => update("serviceNeeded", e.target.value)}
                   >
                     <option value="">Seleccionar servicio...</option>
-                    {services.map((s) => (
+                    {serviceOptions.map((s) => (
                       <option key={s.id} value={s.name}>
                         {s.name}
                       </option>

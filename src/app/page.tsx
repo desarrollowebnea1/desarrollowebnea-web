@@ -119,7 +119,7 @@ export default async function HomePage() {
         />
         <section id="presupuesto" className="section-padding">
           <div className="section-container grid gap-12 lg:grid-cols-2">
-            <BudgetForm whatsapp={settings?.whatsapp} />
+            <BudgetForm services={services} whatsapp={settings?.whatsapp} />
             <StatusLookup />
           </div>
         </section>
