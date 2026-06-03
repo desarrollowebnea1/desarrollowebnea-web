@@ -1,0 +1,180 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum BudgetStatus {
+  NUEVA
+  CONTACTADA
+  EN_ANALISIS
+  PRESUPUESTADA
+  CERRADA
+  CANCELADA
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SiteSettings {
+  id               String   @id @default(cuid())
+  brandName        String   @default("DESARROLLO WEB NEA")
+  slogan           String?
+  heroTitle        String?
+  heroSubtitle     String?
+  heroImage        String?
+  logo             String?
+  whatsapp         String?
+  email            String?
+  instagram        String?
+  linkedin         String?
+  location         String?
+  footerText       String?
+  seoTitle         String?
+  seoDescription   String?
+  seoKeywords      String?
+  whatsappMessage  String?
+  aboutText        String?  @db.Text
+  processText      String?  @db.Text
+  techText         String?  @db.Text
+  supportText      String?  @db.Text
+  pricingNote      String?  @db.Text
+  supportNote      String?  @db.Text
+  trustBarItems    Json?
+  processSteps     Json?
+  includedFeatures Json?
+  techStack        Json?
+  maintenancePlans Json?
+  updatedAt        DateTime @updatedAt
+}
+
+model Project {
+  id           String      @id @default(cuid())
+  name         String
+  slug         String      @unique
+  rubro        String
+  shortDesc    String
+  longDesc     String?     @db.Text
+  problem      String?     @db.Text
+  solution     String?     @db.Text
+  result       String?     @db.Text
+  webUrl       String?
+  imageUrl     String?
+  technologies String[]
+  features     String[]
+  featured     Boolean     @default(false)
+  active       Boolean     @default(true)
+  order        Int         @default(0)
+  caseStudies  CaseStudy[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+model CaseStudy {
+  id           String   @id @default(cuid())
+  projectId    String?
+  project      Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  title        String
+  slug         String   @unique
+  problem      String   @db.Text
+  solution     String   @db.Text
+  features     String[]
+  result       String   @db.Text
+  technologies String[]
+  systemType   String?
+  learnings    String?  @db.Text
+  imageUrl     String?
+  webUrl       String?
+  active       Boolean  @default(true)
+  order        Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  name        String
+  description String   @db.Text
+  icon        String?
+  idealFor    String?
+  priceFrom   String?
+  active      Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PricingPlan {
+  id          String   @id @default(cuid())
+  name        String
+  priceFrom   String
+  description String   @db.Text
+  features    String[]
+  featured    Boolean  @default(false)
+  active      Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model BudgetRequest {
+  id            String       @id @default(cuid())
+  code          String       @unique
+  name          String
+  whatsapp      String
+  email         String
+  businessName  String
+  rubro         String
+  serviceNeeded String
+  hasLogo       String?
+  hasContent    String?
+  needsAdmin    String?
+  needsWhatsapp String?
+  budgetApprox  String?
+  message       String?      @db.Text
+  status        BudgetStatus @default(NUEVA)
+  statusMessage String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  name      String
+  business  String
+  text      String   @db.Text
+  imageUrl  String?
+  active    Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Faq {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String   @db.Text
+  active    Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ImageAsset {
+  id        String   @id @default(cuid())
+  url       String
+  filename  String
+  mimeType  String
+  size      Int
+  alt       String?
+  createdAt DateTime @default(now())
+}

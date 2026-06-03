@@ -1,101 +1,149 @@
-import Image from "next/image";
+import type { Metadata } from "next";
+import {
+  Navbar,
+  Hero,
+  TrustBar,
+  ServicesSection,
+  PortfolioSection,
+  CaseStudiesSection,
+  IncludedSection,
+  ProcessSection,
+  PricingSection,
+  TechSection,
+  SupportSection,
+  AboutSection,
+  BudgetForm,
+  StatusLookup,
+  FAQSection,
+  ContactSection,
+  Footer,
+  WhatsAppButton,
+  FloatingOrbs,
+} from "@/components/public";
+import {
+  getSiteSettings,
+  getPublicProjects,
+  getPublicCaseStudies,
+  getPublicServices,
+  getPublicPlans,
+  getPublicFaqs,
+} from "@/lib/db-helpers";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  const title =
+    settings?.seoTitle ||
+    "DESARROLLO WEB NEA | Webs y sistemas que trabajan por tu negocio";
+  const description =
+    settings?.seoDescription ||
+    "Diseñamos y desarrollamos páginas web, catálogos digitales, sistemas de gestión y aplicaciones web para comercios, profesionales y empresas del NEA.";
+  const keywords =
+    settings?.seoKeywords ||
+    "desarrollo web, NEA, Corrientes, páginas web, catálogo digital, sistema de gestión, panel admin, WhatsApp";
+
+  return {
+    title,
+    description,
+    keywords: keywords.split(",").map((k) => k.trim()),
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      locale: "es_AR",
+      siteName: settings?.brandName || "DESARROLLO WEB NEA",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+    },
+    robots: { index: true, follow: true },
+  };
+}
+
+export default async function HomePage() {
+  const [settings, projects, cases, services, plans, faqs] =
+    await Promise.all([
+      getSiteSettings(),
+      getPublicProjects(),
+      getPublicCaseStudies(),
+      getPublicServices(),
+      getPublicPlans(),
+      getPublicFaqs(),
+    ]);
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+    <>
+      <FloatingOrbs />
+      <Navbar
+        brandName={settings?.brandName ?? undefined}
+        logo={settings?.logo}
+        whatsapp={settings?.whatsapp}
+        whatsappMessage={settings?.whatsappMessage}
+      />
+      <main>
+        <Hero
+          title={settings?.heroTitle}
+          subtitle={settings?.heroSubtitle}
+          slogan={settings?.slogan}
+          projects={projects}
         />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+        <TrustBar items={settings?.trustBarItems} />
+        <ServicesSection services={services} />
+        <PortfolioSection projects={projects} />
+        <CaseStudiesSection cases={cases} />
+        <IncludedSection features={settings?.includedFeatures} />
+        <ProcessSection
+          steps={settings?.processSteps}
+          processText={settings?.processText}
+        />
+        <PricingSection
+          plans={plans}
+          pricingNote={settings?.pricingNote}
+        />
+        <TechSection
+          techStack={settings?.techStack}
+          techText={settings?.techText}
+        />
+        <SupportSection
+          maintenancePlans={settings?.maintenancePlans}
+          supportText={settings?.supportText}
+          supportNote={settings?.supportNote}
+        />
+        <AboutSection
+          aboutText={settings?.aboutText}
+          location={settings?.location}
+          brandName={settings?.brandName}
+        />
+        <section id="presupuesto" className="section-padding">
+          <div className="section-container grid gap-12 lg:grid-cols-2">
+            <BudgetForm whatsapp={settings?.whatsapp} />
+            <StatusLookup />
+          </div>
+        </section>
+        <FAQSection faqs={faqs} />
+        <ContactSection
+          email={settings?.email}
+          whatsapp={settings?.whatsapp}
+          location={settings?.location}
+          instagram={settings?.instagram}
+          linkedin={settings?.linkedin}
+        />
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      <Footer
+        brandName={settings?.brandName ?? undefined}
+        footerText={settings?.footerText}
+        email={settings?.email}
+        whatsapp={settings?.whatsapp}
+        location={settings?.location}
+      />
+      <WhatsAppButton
+        phone={settings?.whatsapp}
+        message={settings?.whatsappMessage ?? undefined}
+        variant="floating"
+      />
+    </>
   );
 }

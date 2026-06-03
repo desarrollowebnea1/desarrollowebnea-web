@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DESARROLLO WEB NEA — Web Oficial
 
-## Getting Started
+Web ultra premium autoadministrable para **DESARROLLO WEB NEA**. Portfolio, servicios, precios, formulario de presupuesto, WhatsApp y panel admin completo.
 
-First, run the development server:
+## Stack
+
+- Next.js 14 (App Router)
+- TypeScript
+- Tailwind CSS
+- Prisma + Neon PostgreSQL
+- Vercel + Vercel Blob
+- JWT httpOnly + bcrypt
+
+## Inicio rápido
 
 ```bash
+# 1. Instalar dependencias
+npm install
+
+# 2. Configurar variables
+cp .env.example .env
+# Editar DATABASE_URL, JWT_SECRET, BLOB_READ_WRITE_TOKEN
+
+# 3. Base de datos
+npx prisma generate
+npx prisma db push
+npm run db:seed
+
+# 4. Desarrollo
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abrir [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**Admin:** [http://localhost:3000/admin/login](http://localhost:3000/admin/login)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Email: `admin@desarrollowebnea.com`
+- Password: `admin123456`
 
-## Learn More
+> ⚠️ Cambiar contraseña antes de publicar en producción.
 
-To learn more about Next.js, take a look at the following resources:
+## Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Comando | Descripción |
+|---------|-------------|
+| `npm run dev` | Servidor de desarrollo |
+| `npm run build` | Build de producción |
+| `npm run start` | Servidor producción |
+| `npm run db:push` | Sincronizar schema con Neon |
+| `npm run db:seed` | Cargar datos iniciales |
+| `npm run db:studio` | Prisma Studio |
+| `npm run qa:check` | Verificación pre-entrega |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Variables de entorno
 
-## Deploy on Vercel
+Ver `.env.example`:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `DATABASE_URL` — Neon PostgreSQL
+- `JWT_SECRET` — Secreto JWT (mín. 32 chars en producción)
+- `BLOB_READ_WRITE_TOKEN` — Vercel Blob (uploads)
+- `NEXT_PUBLIC_APP_URL` — URL pública de la app
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deploy en Vercel
+
+1. Conectar repo GitHub
+2. Agregar variables de entorno
+3. Deploy automático
+4. Ejecutar `npx prisma db push` y `npm run db:seed` contra Neon
+
+## Documentación
+
+- [docs/ENTREGA-CLIENTE.md](docs/ENTREGA-CLIENTE.md)
+- [docs/MANTENIMIENTO.md](docs/MANTENIMIENTO.md)
+- [docs/QA-ENTREGA.md](docs/QA-ENTREGA.md)
+
+## Health check
+
+`GET /api/health` — estado de app, DB y Blob.
+
+## Licencia
+
+Proyecto privado — DESARROLLO WEB NEA © 2026
